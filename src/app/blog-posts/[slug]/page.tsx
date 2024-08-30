@@ -1,11 +1,11 @@
 import { PortableText, type SanityDocument } from "next-sanity";
-import imageUrlBuilder from "@sanity/image-url";
-
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { PortableTextComponents } from '@portabletext/react'
 import { client, sanityFetch } from "@/sanity/client";
+import imageUrlBuilder from "@sanity/image-url";
 import Image from 'next/image';
-import BlogSidebar from "@/components/blog/BlogSidebar";
 import BlogFooter from "@/components/blog/BlogFooter";
+import BlogSidebar from "@/components/blog/BlogSidebar";
 
 const { projectId, dataset } = client.config();
 const urlFor = (source: SanityImageSource) =>
@@ -24,6 +24,30 @@ const BLOGPOST_QUERY = `*[
   },
   "estimatedReadingTime": round(length(pt::text(body)) / 5 / 180)
 }`;
+
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
+}
+
+function extractHeadings(body: any[]): { id: string; text: string }[] {
+  const headings: { id: string; text: string }[] = [];
+
+  body.forEach((block) => {
+    if (block._type === 'block' && block.style === 'h2') {
+      const text = block.children
+        .filter((child: any) => child._type === 'span')
+        .map((span: any) => span.text)
+        .join('');
+      const id = generateSlug(text);
+      headings.push({ id, text });
+    }
+  });
+
+  return headings;
+}
 
 export default async function BlogPostPage({ 
   params 
@@ -47,33 +71,32 @@ export default async function BlogPostPage({
   const blogPostImage = image
     ? urlFor(image)?.width(550).height(310).url()
     : null;
-  
-  // TEMPORARY
-  const jumpToLinks = [
-    { href: '#what-is-the-backend-api', text: 'What is the Backend API?' },
-    { href: '#what-are-clerk-webhooks', text: 'What are Clerk Webhooks?' },
-    { href: '#comparing-webhooks-vs-backend-api', text: 'Comparing Webhooks vs Backend API' },
-    { href: '#guidance', text: 'Guidance' },
-  ];
-  // =========
 
-  if (!blogPost) {
-    return <div>Post not found</div>;
-  }
+  const headings = extractHeadings(body);
+  const jumpToLinks = headings.map(({ id, text }) => ({ href: `#${id}`, text }));
+
+  const components: PortableTextComponents = {
+    block: {
+      h2: ({ children }) => {
+        const text = children?.toString() || '';
+        const id = generateSlug(text);
+        return <h2 id={id}>{children}</h2>;
+      },
+    },
+  };
 
   return (
     <div className="mt-12 mx-auto w-full px-6 sm:max-w-[40rem] md:max-w-[48rem] md:px-8 lg:max-w-[64rem] xl:max-w-[80rem]">
       <article>
         <header className="mx-auto flex max-w-[50rem] flex-col xl:mx-0">
           <h1 className="mt-6 text-pretty text-4.5xl font-bold text-gray-950">{title}</h1>
-          
           <div className="mb-6 text-gray-600">
             <p>By {author.name} | {new Date(publishedAt).toLocaleDateString()}</p>
             <p>Estimated reading time: {estimatedReadingTime} min</p>
             <p className="mt-4 max-w-2xl text-lg text-gray-700">{excerpt}</p>
           </div>
         </header>
-        
+
         <div className="mx-auto mt-12 max-w-[50rem] xl:grid xl:max-w-none xl:grid-cols-[50rem_1fr] xl:items-start xl:gap-x-20">
           <BlogSidebar 
             category="Guides"
@@ -92,18 +115,21 @@ export default async function BlogPostPage({
                 />
               </div>
             )}
-            
+
             <div className="prose prose-lg">
-              <PortableText value={body} />
+              <PortableText 
+                value={body} 
+                components={components}
+              />
             </div>
-            
+
             <BlogFooter 
               authorName={author.name}
               authorImageSrc={author.image}
             />
           </div>
         </div>
-        
+
         {tags && tags.length > 0 && (
           <div className="mt-8">
             <h2 className="text-xl font-semibold mb-2">Tags:</h2>
