@@ -15,14 +15,14 @@ const Navbar = () => {
             <Link href="/" className="px-3 py-2 rounded-md flex-shrink-0 flex items-center text-gray-700 hover:text-gray-900 hover:bg-gray-50">
               Home
             </Link>
-          </div>
-          <div className="flex items-center">
             <Link href="/blog" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
               Blog
             </Link>
             <Link href="/store" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
               Store
             </Link>
+          </div>
+          <div className="flex items-center">
             <SignedOut>
               <SignInButton mode="modal">
                 <button className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">

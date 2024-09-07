@@ -61,4 +61,20 @@
   body {
     @apply bg-background text-foreground;
   }
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+  p, 
+  li, 
+  figcaption {
+    text-wrap: pretty;
+    max-width: 70ch;
+  }
+  header,
+  footer,
+  main,
+  section,
+  article {
+    container-type: inline-size;
+  }
 }

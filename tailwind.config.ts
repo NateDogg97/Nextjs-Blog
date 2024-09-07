@@ -16,6 +16,9 @@ const config: Config = {
 			fontSize: {
 				'4.5xl': ['2.5rem', {lineHeight: '3rem', letterSpacing: '-0.035em'}]
 			},
+			fontWeight: {
+				book: '450'
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
