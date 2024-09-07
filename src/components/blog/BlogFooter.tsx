@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar"
+import { getInitials } from '@/lib/utils'
 
 interface BlogFooterProps {
   authorName: string;
-  authorImageSrc: string;
+  authorImageSrc: string | null;
 }
 
 const BlogFooter: React.FC<BlogFooterProps> = ({ authorName, authorImageSrc }) => {
@@ -14,22 +16,18 @@ const BlogFooter: React.FC<BlogFooterProps> = ({ authorName, authorImageSrc }) =
   const copyLinkToClipboard = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+      setTimeout(() => setCopied(false), 2000); 
     });
   };
+	const authorInitials = getInitials(authorName);
 
   return (
     <footer className="mx-auto mt-16 flex w-full items-start justify-between gap-x-4 border-t border-gray-950/10 pt-8">
       <div className="flex flex-auto flex-wrap gap-2">
-        <div className="flex flex-none">
-          <Image
-            src={authorImageSrc}
-            alt=""
-            width={24}
-            height={24}
-            className="-ml-1 h-6 w-6 flex-none rounded-full ring-[1.5px] ring-gray-50 first:ml-0"
-          />
-        </div>
+				<Avatar>
+					<AvatarImage src={authorImageSrc || undefined} alt={`${authorName}'s avatar`} />
+					<AvatarFallback>{authorInitials}</AvatarFallback>
+				</Avatar>
         <dl className="relative flex max-w-80 flex-auto flex-wrap items-center text-sm font-book text-gray-950">
           <dt className="sr-only">Author</dt>
           <dd className="whitespace-nowrap">{authorName}</dd>

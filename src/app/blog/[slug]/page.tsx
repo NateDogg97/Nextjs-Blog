@@ -1,6 +1,6 @@
 import { PortableText, type SanityDocument } from "next-sanity";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import { PortableTextComponents } from '@portabletext/react'
+import { PortableTextComponents } from '@portabletext/react';
 import { client, sanityFetch } from "@/sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import Image from 'next/image';
@@ -20,7 +20,9 @@ const BLOGPOST_QUERY = `*[
   ...,
   author->{
     name,
-    image
+    image {
+      asset->
+    }
   },
   "estimatedReadingTime": round(length(pt::text(body)) / 5 / 180)
 }`;
@@ -70,6 +72,10 @@ export default async function BlogPostPage({
   } = blogPost;
   const blogPostImage = image
     ? urlFor(image)?.width(550).height(310).url()
+    : null;
+
+  const authorImage = author.image && urlFor(author.image)
+    ? urlFor(author.image)!.width(48).height(48).url()
     : null;
 
   const headings = extractHeadings(body);
@@ -125,7 +131,7 @@ export default async function BlogPostPage({
 
             <BlogFooter 
               authorName={author.name}
-              authorImageSrc={author.image}
+              authorImageSrc={authorImage}
             />
           </div>
         </div>

@@ -23,7 +23,7 @@ interface BlogPost extends SanityDocument {
 
 const BlogPostItem = React.memo(({ blogPost }: { blogPost: BlogPost }) => (
   <li className="bg-white shadow-md hover:shadow-lg rounded-lg overflow-hidden">
-    <Link href={`/blog-posts/${blogPost.slug.current}`} className="block">
+    <Link href={`/blog/${blogPost.slug.current}`} className="block">
       {blogPost.image && (
         <div className="relative w-full h-48">
           <Image
