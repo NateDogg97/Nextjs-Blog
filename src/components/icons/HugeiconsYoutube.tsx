@@ -1,4 +1,4 @@
-import React, {SVGProps } from "react"
+import React, { SVGProps } from "react"
 
 export function HugeiconsYoutube(props: SVGProps<SVGSVGElement>) {
     return (
